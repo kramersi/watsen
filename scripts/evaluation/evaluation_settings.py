@@ -13,79 +13,87 @@ stages = [
 ]
 
 frame_extraction_combinations_large = [
-    [0, 0, 0],
-    [0, 0, 0.1],
-    [0, 0, 0.2],
-    [0, 0, 0.5],
-    [0, 0, 1],
-    [0, 0, 5],
-    [0, 0.1, 0.2],
+    # [0, 0, 0],
+    # [0, 0, 0.1],
+    # [0, 0, 0.2],
+    # [0, 0, 0.5],
+    # [0, 0, 1],
+    # [0, 0, 5],
+    # [0, 0.1, 0.2],
     [0, 0.2, 0.4],
-    [0, 0.5, 1],
-    [0, 1, 2],
-    [0, 5, 10],
-    [0, 0.1, 0.3],
-    [0, 0.2, 0.6],
-    [0, 0.5, 1.5],
-    [0, 0.2, 1.2]
+    # [0, 0.5, 1],
+    # [0, 1, 2],
+    # [0, 5, 10],
+    # [0, 0.1, 0.3],
+    # [0, 0.2, 0.6],
+    # [0, 0.5, 1.5],
+    # [0, 0.2, 1.2]
 ]
 
 frame_extraction_combinations_small = [
-    [0, 0, 5],
-    [0, 0, 0.2],
+    #[0, 0, 5],
+    #[0, 0, 0.2],
     [0, 0.2, 0.4]
 ]
 
 frame_extraction_new_dim = (640, 360)
 select_sample_images = {
-    "intra-event": {
+    # "intra-event": {
+    #     "cameras": ["cam1"],
+    #     "name": 'intra',
+    #     "start": "161007_110800",
+    #     "end": "161007_121000",
+    #     "count": 100,
+    #     "encourage_flooded": 1  # weight given to flooded frames to encourage selection. the weight given to
+    #                             # non-flooded frames is 1
+    # },
+    # "inter-event": {
+    #     "cameras": ["cam1"],
+    #     "name": 'inter',
+    #     "start": "161007_121000",
+    #     "end": "161007_134830",
+    #     "count": 30,  # frames to label manually for train-test
+    #     "encourage_flooded": 3  # weight to encourage extraction of frames during flooding
+    # },
+    # "extra": {
+    #     "cameras": ["cam2", "cam3", "cam4", "cam5"],
+    #     "name": 'extra',
+    #     "start": "161007_110800",
+    #     "end": "161007_134830",
+    #     "count": 30,
+    #     "encourage_flooded": 3
+    # },
+    # "extra2": {
+    #     "cameras": ["gopro1"],
+    #     "name": 'extra',
+    #     "start": "161006_165900",
+    #     "end": "161006_174600",
+    #     "count": 30,
+    #     "encourage_flooded": 3
+    # },
+    # "intra-event-2": {
+    #     "cameras": ["cam5"],
+    #     "name": 'intra',
+    #     "start": "161007_124600",
+    #     "end": "161007_130422",
+    #     "count": 50,
+    #     "encourage_flooded": 1
+    # },
+    # "inter-event-2": {
+    #     "cameras": ["cam5"],
+    #     "name": 'inter',
+    #     "start": "161007_131344",
+    #     "end": "161007_135600",
+    #     "count": 30,
+    #     "encourage_flooded": 1
+    # },
+    "new": {
         "cameras": ["cam1"],
-        "name": 'intra',
-        "start": "161007_110800",
-        "end": "161007_121000",
-        "count": 100,
+        "name": 'new',
+        "start": "161007_122500",
+        "end": "161007_123400",
+        "count": 0,
         "encourage_flooded": 1  # weight given to flooded frames to encourage selection. the weight given to
-                                # non-flooded frames is 1
-    },
-    "inter-event": {
-        "cameras": ["cam1"],
-        "name": 'inter',
-        "start": "161007_121000",
-        "end": "161007_134830",
-        "count": 30,
-        "encourage_flooded": 3
-    },
-    "extra": {
-        "cameras": ["cam2", "cam3", "cam4", "cam5"],
-        "name": 'extra',
-        "start": "161007_110800",
-        "end": "161007_134830",
-        "count": 30,
-        "encourage_flooded": 3
-    },
-    "extra2": {
-        "cameras": ["gopro1"],
-        "name": 'extra',
-        "start": "161006_165900",
-        "end": "161006_174600",
-        "count": 30,
-        "encourage_flooded": 3
-    },
-    "intra-event-2": {
-        "cameras": ["cam5"],
-        "name": 'intra',
-        "start": "161007_124600",
-        "end": "161007_130422",
-        "count": 50,
-        "encourage_flooded": 1
-    },
-    "inter-event-2": {
-        "cameras": ["cam5"],
-        "name": 'inter',
-        "start": "161007_131344",
-        "end": "161007_135600",
-        "count": 30,
-        "encourage_flooded": 1
     }
 
 }
@@ -123,42 +131,87 @@ train = {
 }
 
 prediction_combinations = [
+    # {
+    #     "data": "cam1_161007A_0_0.2_0.4",
+    #     "model": "cam1_intra_0_0.2_0.4__ly4ftr16w2__"
+    # },
+    # {
+    #     "data": "cam1_161006A_0_0.2_0.4",
+    #     "model": "cam1cam5_intra_0_0.2_0.4__ly4ftr16w2__"
+    # },
+    # {
+    #      "data": "cam1_161006B_0_0.2_0.4",
+    #      "model": "cam1cam5_intra_0_0.2_0.4__ly4ftr16w2__"
+    # },
+    # {
+    #      "data": "cam5_161006B_0_0.2_0.4",
+    #      "model": "cam1cam5_intra_0_0.2_0.4__ly4ftr16w2__"
+    # },
+    # {
+    #      "data": "cam4_161006A_0_0.2_0.4",
+    #      "model": "cam1cam5_intra_0_0.2_0.4__ly4ftr16w2__"
+    # },
+    # {
+    #      "data": "cam4_161006B_0_0.2_0.4",
+    #      "model": "cam1cam5_intra_0_0.2_0.4__ly4ftr16w2__"
+    # }
+    # {
+    #      "data": "cam2_161007A_0_0.2_0.4",
+    #      "model": "cam1cam5_intra_0_0.2_0.4__ly4ftr16w2__"
+    # },
+    # {
+    #      "data": "cam3_161007A_0_0.2_0.4",
+    #      "model": "cam1cam5_intra_0_0.2_0.4__ly4ftr16w2__"
+    # },
+    # {
+    #      "data": "cam3_161006A_0_0.2_0.4",
+    #      "model": "cam1cam5_intra_0_0.2_0.4__ly4ftr16w2__"
+    # },
+    # {
+    #      "data": "cam3_161006B_0_0.2_0.4",
+    #      "model": "cam1cam5_intra_0_0.2_0.4__ly4ftr16w2__"
+    # },
+    # {
+    #      "data": "cam2_161006A_0_0.2_0.4",
+    #      "model": "cam1cam5_intra_0_0.2_0.4__ly4ftr16w2__"
+    # },
     {
-        "data": "cam1_0_0.2_0.4",
-        "model": "cam1_intra_0_0.2_0.4__ly4ftr16w2__"
-    },
-    {
-        "data": "cam2_0_0.2_0.4",
-        "model": "cam1_intra_0_0.2_0.4__ly4ftr16w2__"
-    },
-    {
-        "data": "cam3_0_0.2_0.4",
-        "model": "cam1_intra_0_0.2_0.4__ly4ftr16w2__"
-    },
-    {
-        "data": "cam4_0_0.2_0.4",
-        "model": "cam1_intra_0_0.2_0.4__ly4ftr16w2__"
-    },
-    {
-        "data": "cam5_0_0.2_0.4",
-        "model": "cam1_intra_0_0.2_0.4__ly4ftr16w2__"
-    },
-    {
-        "data": "gopro1_0_0.2_0.4",
-        "model": "cam1_intra_0_0.2_0.4__ly4ftr16w2__"
-    },
-    {
-        "data": "cam1_0_0.2_0.4",
-        "model": "cam1cam5_intra_0_0.2_0.4__ly4ftr16w2__"
-    },
-    {
-        "data": "cam5_0_0.2_0.4",
-        "model": "cam1cam5_intra_0_0.2_0.4__ly4ftr16w2__"
-    },
-    {
-        "data": "gopro1_0_0.2_0.4",
-        "model": "cam1cam5_intra_0_0.2_0.4__ly4ftr16w2__"
-    },
+         "data": "cam2_161006B_0_0.2_0.4",
+         "model": "cam1cam5_intra_0_0.2_0.4__ly4ftr16w2__"
+    }
+    # from matthew already done
+    # {
+    #     "data": "cam2_0_0.2_0.4",
+    #     "model": "cam1_intra_0_0.2_0.4__ly4ftr16w2__"
+    # },
+    # {
+    #     "data": "cam3_0_0.2_0.4",
+    #     "model": "cam1_intra_0_0.2_0.4__ly4ftr16w2__"
+    # },
+    # {
+    #     "data": "cam4_0_0.2_0.4",
+    #     "model": "cam1_intra_0_0.2_0.4__ly4ftr16w2__"
+    # },
+    # {
+    #     "data": "cam5_0_0.2_0.4",
+    #     "model": "cam1_intra_0_0.2_0.4__ly4ftr16w2__"
+    # },
+    # {
+    #     "data": "gopro1_0_0.2_0.4",
+    #     "model": "cam1_intra_0_0.2_0.4__ly4ftr16w2__"
+    # },
+    # {
+    #     "data": "cam1_0_0.2_0.4",
+    #     "model": "cam1cam5_intra_0_0.2_0.4__ly4ftr16w2__"
+    # },
+    # {
+    #     "data": "cam5_0_0.2_0.4",
+    #     "model": "cam1cam5_intra_0_0.2_0.4__ly4ftr16w2__"
+    # },
+    # {
+    #     "data": "gopro1_0_0.2_0.4",
+    #     "model": "cam1cam5_intra_0_0.2_0.4__ly4ftr16w2__"
+    # },
 ]
 y_scaling = 200
 rois = {
@@ -183,4 +236,11 @@ rois = {
         "height": 142,
         "width": 120
     }
+    # "cam4": {
+    #     "name": "dam_water_level_cam4",
+    #     "top": 0,
+    #     "left": 400,
+    #     "height": 150,
+    #     "width": 0
+    # },
 }

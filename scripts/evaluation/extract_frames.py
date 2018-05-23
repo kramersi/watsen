@@ -16,6 +16,7 @@ def extract_from_all(video_dir, output_dir, new_dims, sensor_data_url, offsets, 
 
     # Get sensor data to append to image file names
     sensor_data = load_sensor_data(sensor_data_url)
+    print('sensData', sensor_data.head())
 
     # Depending on the camera, we either do many or few timedelta combinations
     if 'cam1' in video_dir:
@@ -29,9 +30,11 @@ def extract_from_all(video_dir, output_dir, new_dims, sensor_data_url, offsets, 
         # create multitime string for filename
         multitime = '_'.join(str(x) for x in timedeltas)
         # get camera from directory
-        camera = os.path.basename(video_dir).split('_')[1]
+        dir_list = os.path.basename(video_dir).split('_')
+        camera = dir_list[1]
+        timehorizon = dir_list[3]
         # subdir for saving the frames
-        output_subdir = os.path.join(output_dir, camera + '_' + multitime)
+        output_subdir = os.path.join(output_dir, camera + '_' + timehorizon + '_' + multitime)
 
         # Check that output dir exists. If so, we assume the images were already extracted and skip to the next timedelta
         if os.path.exists(output_subdir) and not force:
@@ -93,6 +96,7 @@ def load_sensor_data(url, sep=';'):
 
 def load_video_time_offsets(url, sep='\t'):
     # Read temporal offsets from file
+    print('reading offset')
     offsets = pandas.read_csv(url, sep=sep, skiprows=2)
 
     # Reformat data
