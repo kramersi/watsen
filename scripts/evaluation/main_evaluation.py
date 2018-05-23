@@ -103,16 +103,21 @@ if work_type == 'extract':
 #     train_classifier.train(dataset, working_dir, appendum='w2')
 
 # do testing (INTRA-event performance)
+
 # for model_dir in os.listdir(os.path.join(working_dir, s.stages[4])):
 #     dataset = model_dir.split(sep='__')[0] + '.csv'
 #     test_classifier.test(
 #         model_dir=os.path.join(working_dir, s.stages[4], model_dir),
 #         working_dir=working_dir, dataset_csv=os.path.join(working_dir, s.stages[3], dataset), force=False
 #     )
-# for prediction_dir in os.listdir(os.path.join(working_dir, s.stages[5])):
-#     dataset_path = os.path.join(working_dir, s.stages[3], prediction_dir.split('__')[0] + '.csv')
-#     iou = test_classifier.computeIou(dataset_path, os.path.join(working_dir, s.stages[5], prediction_dir))
-#     print(prediction_dir, iou)
+
+# test ious was outcommented before the merge with rebase
+for test_result_dir in os.listdir(os.path.join(working_dir, s.stages[5])):
+    # For each segmentation result folder, find corresponding dataset name
+    dataset_path = os.path.join(working_dir, s.stages[3], test_result_dir.split('__D')[1] + '.csv')
+    # compute IoU by comparing the ground truth to the test results
+    ious = test_classifier.computeIou(dataset_path, os.path.join(working_dir, s.stages[5], test_result_dir), channel=2)
+    print(test_result_dir, ious[0])
 
 # do testing (INTER-event performance)
 # for model_dir in os.listdir(os.path.join(working_dir, s.stages[4])):
