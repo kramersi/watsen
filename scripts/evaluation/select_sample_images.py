@@ -95,8 +95,8 @@ def create(image_dir, output_dir, camera, sample_settings, image_pattern='*.jpg'
 def directory_struct(directory, name, force):
     # create dire
     subdirs = [
-        'images',
-        'labels'
+        'images',  # for supervisely export use img
+        'labels'   # mark_machine
     ]
     if not os.path.exists(os.path.join(directory, name)):
         os.makedirs(os.path.join(directory, name))

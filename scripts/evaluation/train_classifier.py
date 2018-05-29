@@ -16,7 +16,7 @@ def train(dataset_csv, working_dir, appendum='', force=False):
 
     # only retrain if necessary
     if not os.path.exists(foldername) or force:
-        generator = image_util.ImageDataProvider(dataset_path=dataset_csv)
+        generator = image_util.ImageDataProvider(dataset_path=dataset_csv, shuffle_data=True)  # add shuffle data
         net = unet.Unet(
             channels=s.network['channels'],
             n_class=s.network['classes'],

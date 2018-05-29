@@ -65,9 +65,9 @@ camera_time_offset_url = 'https://zenodo.org/record/1039631/files/temporal_offse
 ## Set up folder structure
 setup.run(working_dir)
 
-work_type = 'predict'  #  predict
+work_types = ['predict']  # select what to do from: extract, label, train, test, predict (order is important)
 
-if work_type == 'extract':
+if 'extract' in work_types:
     ## Fetch videos from repositories (only downloaded if necessary)
     video_folders = []
     for url in video_archive_urls:
@@ -83,71 +83,74 @@ if work_type == 'extract':
             s.frame_extraction_new_dim,
             sensor_data_urls[i], time_offset, force=False)
 
-# ## Select samples randomly for labelling  ##
-# select_sample_images.create_all(working_dir)
+if 'label' in work_types:
+    ## Select samples randomly for labelling  ## is done directly in supervisely
+    select_sample_images.create_all(working_dir)
 
-# Once samples have been labeled, we can verify that there is a correlation between water level and flood index
-# compute_index.process_labels(working_dir)
-# for ts in glob.glob(os.path.join(working_dir, s.stages[-1], 'flood index correlation', '*.csv')):
-#     compute_index.plot_from_csv(ts, os.path.join(working_dir, s.stages[-1], 'flood index correlation'), is_labels=True, force=True)
+    # Once samples have been labeled, we can verify that there is a correlation between water level and flood index
+    compute_index.process_labels(working_dir)
+    for ts in glob.glob(os.path.join(working_dir, s.stages[-1], 'flood index correlation', '*.csv')):
+        compute_index.plot_from_csv(ts, os.path.join(working_dir, s.stages[-1], 'flood index correlation'), is_labels=True, force=True)
 
-# create training and testing datasets for convolutional neural network
-# datasets = image_datasets.create_all(
-#     working_dir=working_dir)
+if 'train' in work_types:
+    # create training and testing datasets for convolutional neural network
+    datasets = image_datasets.create_all(
+        working_dir=working_dir, image_pattern='*.png')
 
-# create combined datasets for training cnn with two cameras (semi-generalized)
-# image_datasets.create_combinations('cam1', 'cam5', working_dir)
+    # create combined datasets for training cnn with two cameras (semi-generalized)
+    # image_datasets.create_combinations('cam1', 'cam5', working_dir)
 
-# do training with each dataset, only using image files labeled for testing
-# for dataset in glob.glob(os.path.join(working_dir, s.stages[3], '*intra*.csv')):
-#     train_classifier.train(dataset, working_dir, appendum='w2')
+    # do training with each dataset, only using image files labeled for testing
+    for dataset in glob.glob(os.path.join(working_dir, s.stages[3], '*.csv')):  # deleted *intra* for supervisely
+        train_classifier.train(dataset, working_dir, appendum='w2')
 
-# do testing (INTRA-event performance)
+if 'test' in work_types:
+    # do testing (INTRA-event performance)
+    for model_dir in os.listdir(os.path.join(working_dir, s.stages[4])):
+        dataset = model_dir.split(sep='__')[0] + '.csv'
+        test_classifier.test(
+            model_dir=os.path.join(working_dir, s.stages[4], model_dir),
+            working_dir=working_dir, dataset_csv=os.path.join(working_dir, s.stages[3], dataset), force=False
+        )
 
-# for model_dir in os.listdir(os.path.join(working_dir, s.stages[4])):
-#     dataset = model_dir.split(sep='__')[0] + '.csv'
-#     test_classifier.test(
-#         model_dir=os.path.join(working_dir, s.stages[4], model_dir),
-#         working_dir=working_dir, dataset_csv=os.path.join(working_dir, s.stages[3], dataset), force=False
-#     )
+    # test ious was outcommented before
+    for test_result_dir in os.listdir(os.path.join(working_dir, s.stages[5])):
+        # For each segmentation result folder, find corresponding dataset name
+        dataset_path = os.path.join(working_dir, s.stages[3], test_result_dir.split('__D')[1] + '.csv')
+        # compute IoU by comparing the ground truth to the test results
+        ious = test_classifier.computeIou(dataset_path, os.path.join(working_dir, s.stages[5], test_result_dir), channel=2)
+        print(test_result_dir, ious[0])
 
-# test ious was outcommented before the merge with rebase
-for test_result_dir in os.listdir(os.path.join(working_dir, s.stages[5])):
-    # For each segmentation result folder, find corresponding dataset name
-    dataset_path = os.path.join(working_dir, s.stages[3], test_result_dir.split('__D')[1] + '.csv')
-    # compute IoU by comparing the ground truth to the test results
-    ious = test_classifier.computeIou(dataset_path, os.path.join(working_dir, s.stages[5], test_result_dir), channel=2)
-    print(test_result_dir, ious[0])
+    # do testing (INTER-event performance)
+    for model_dir in os.listdir(os.path.join(working_dir, s.stages[4])):
+        # get multitime
+        multitime = model_dir.split(sep='__')[0].split('_', maxsplit=2)[-1]
+        datasets = glob.glob(os.path.join(working_dir, s.stages[3], '*' + multitime + '.csv'))
+        for dataset in datasets:
+            test_classifier.test(
+                model_dir=os.path.join(working_dir, s.stages[4], model_dir),
+                working_dir=working_dir, dataset_csv=dataset, force=False
+            )
+    predictions = os.listdir(os.path.join(working_dir, s.stages[5]))
+    test_results = {'run': [], 'flooding': [], 'all_classes': []}
 
-# do testing (INTER-event performance)
-# for model_dir in os.listdir(os.path.join(working_dir, s.stages[4])):
-#     # get multitime
-#     multitime = model_dir.split(sep='__')[0].split('_', maxsplit=2)[-1]
-#     datasets = glob.glob(os.path.join(working_dir, s.stages[3], '*' + multitime + '.csv'))
-#     for dataset in datasets:
-#         test_classifier.test(
-#             model_dir=os.path.join(working_dir, s.stages[4], model_dir),
-#             working_dir=working_dir, dataset_csv=dataset, force=False
-#         )
-# predictions = os.listdir(os.path.join(working_dir, s.stages[5]))
-# test_results = {'run': [], 'flooding': [], 'all_classes': []}
+    # Evaluate the predictions for the test data: compare segmentation to manual label
+    for prediction_dir in predictions:
+        if os.path.isdir(os.path.join(working_dir, s.stages[5], prediction_dir)):
+            dataset_path = os.path.join(working_dir, s.stages[3], prediction_dir.split('__D')[1] + '.csv')
+            all_classes, flooding = test_classifier.computeIou(dataset_path, os.path.join(working_dir, s.stages[5], prediction_dir), channel=2)
+            test_results['flooding'].append(flooding)
+            test_results['all_classes'].append(all_classes)
+            test_results['run'].append(prediction_dir)
 
-# Evaluate the predictions for the test data: compare segmentation to manual label
-# for prediction_dir in predictions:
-#     if os.path.isdir(os.path.join(working_dir, s.stages[5], prediction_dir)):
-#         dataset_path = os.path.join(working_dir, s.stages[3], prediction_dir.split('__D')[1] + '.csv')
-#         all_classes, flooding = test_classifier.computeIou(dataset_path, os.path.join(working_dir, s.stages[5], prediction_dir), channel=2)
-#         test_results['flooding'].append(flooding)
-#         test_results['all_classes'].append(all_classes)
-#         test_results['run'].append(prediction_dir)
+    # write results to file
+    test_results['num_frames'] = [sum([float(tr) > 0 for tr in st.split('_')[2:5]]) + 1 for st in test_results['run']]
+    test_results['mode'] = [st.split('_')[9] for st in test_results['run']]
+    result_file = os.path.join(working_dir, s.stages[5], 'test_results_' + datetime.now().strftime('%Y-%m-%d %H%M%S') + '.txt')
+    pandas.DataFrame(test_results).to_csv(result_file)
 
-# write results to file
-# test_results['num_frames'] = [sum([float(tr) > 0 for tr in st.split('_')[2:5]]) + 1 for st in test_results['run']]
-# test_results['mode'] = [st.split('_')[9] for st in test_results['run']]
-# result_file = os.path.join(working_dir, s.stages[5], 'test_results_' + datetime.now().strftime('%Y-%m-%d %H%M%S') + '.txt')
-# pandas.DataFrame(test_results).to_csv(result_file)
 
-if work_type == 'predict':
+if 'predict' in work_types:
 
     # For all video segments, do segmentation for all multitemporal images
     for comb in s.prediction_combinations:

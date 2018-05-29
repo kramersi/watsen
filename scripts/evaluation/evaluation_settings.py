@@ -112,6 +112,11 @@ datasets = {
         "frac_train": 0,
         "frac_validate": 0,
         "frac_test": 1
+    },
+    "supervisely": {
+        "frac_train": 0.9,
+        "frac_validate": 0,
+        "frac_test": 0.1
     }
 }
 network = {
@@ -175,10 +180,10 @@ prediction_combinations = [
     #      "data": "cam2_161006A_0_0.2_0.4",
     #      "model": "cam1cam5_intra_0_0.2_0.4__ly4ftr16w2__"
     # },
-    {
-         "data": "cam2_161006B_0_0.2_0.4",
-         "model": "cam1cam5_intra_0_0.2_0.4__ly4ftr16w2__"
-    }
+    # {
+    #      "data": "cam2_161006B_0_0.2_0.4",
+    #      "model": "cam1cam5_intra_0_0.2_0.4__ly4ftr16w2__"
+    # }
     # from matthew already done
     # {
     #     "data": "cam2_0_0.2_0.4",
@@ -212,6 +217,10 @@ prediction_combinations = [
     #     "data": "gopro1_0_0.2_0.4",
     #     "model": "cam1cam5_intra_0_0.2_0.4__ly4ftr16w2__"
     # },
+    {
+         "data": "cam2_161006A_0_0.2_0.4",
+         "model": "dataset47_supervisely__ly4ftr16w2__"
+    },
 ]
 y_scaling = 200
 rois = {
