@@ -121,10 +121,10 @@ datasets = {
 }
 network = {
     "channels": 3,
-    "classes": 3,
+    "classes": 3,  # before: 3
     "layers": 4,
     "features_root": 16,
-    "class_weights": [1, 1, 2]
+    "class_weights": [1, 1, 2]  # before: [1, 1, 2]
 }
 train = {
     "optimizer": "adam",
@@ -244,6 +244,13 @@ rois = {
         "left": 409,
         "height": 142,
         "width": 120
+    },
+    "supervisely": {
+        "name": "supervisely_pics",
+        "top": 0,
+        "left": 0,
+        "height": 360,
+        "width": 640,
     }
     # "cam4": {
     #     "name": "dam_water_level_cam4",

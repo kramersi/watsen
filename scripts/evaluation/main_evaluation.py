@@ -65,7 +65,7 @@ camera_time_offset_url = 'https://zenodo.org/record/1039631/files/temporal_offse
 ## Set up folder structure
 setup.run(working_dir)
 
-work_types = ['predict']  # select what to do from: extract, label, train, test, predict (order is important)
+work_types = ['test']  # select what to do from: extract, label, train, test, predict (order is important)
 
 if 'extract' in work_types:
     ## Fetch videos from repositories (only downloaded if necessary)
@@ -88,9 +88,9 @@ if 'label' in work_types:
     select_sample_images.create_all(working_dir)
 
     # Once samples have been labeled, we can verify that there is a correlation between water level and flood index
-    compute_index.process_labels(working_dir)
-    for ts in glob.glob(os.path.join(working_dir, s.stages[-1], 'flood index correlation', '*.csv')):
-        compute_index.plot_from_csv(ts, os.path.join(working_dir, s.stages[-1], 'flood index correlation'), is_labels=True, force=True)
+    # compute_index.process_labels(working_dir)
+    # for ts in glob.glob(os.path.join(working_dir, s.stages[-1], 'flood index correlation', '*.csv')):
+    #     compute_index.plot_from_csv(ts, os.path.join(working_dir, s.stages[-1], 'flood index correlation'), is_labels=True, force=True)
 
 if 'train' in work_types:
     # create training and testing datasets for convolutional neural network
@@ -109,16 +109,16 @@ if 'test' in work_types:
     for model_dir in os.listdir(os.path.join(working_dir, s.stages[4])):
         dataset = model_dir.split(sep='__')[0] + '.csv'
         test_classifier.test(
-            model_dir=os.path.join(working_dir, s.stages[4], model_dir),
+            model_dir=os.path.join(working_dir, s.stages[4], model_dir), supervisely=True,
             working_dir=working_dir, dataset_csv=os.path.join(working_dir, s.stages[3], dataset), force=False
-        )
+        )  # add suepervisely for not using time information
 
     # test ious was outcommented before
     for test_result_dir in os.listdir(os.path.join(working_dir, s.stages[5])):
         # For each segmentation result folder, find corresponding dataset name
         dataset_path = os.path.join(working_dir, s.stages[3], test_result_dir.split('__D')[1] + '.csv')
         # compute IoU by comparing the ground truth to the test results
-        ious = test_classifier.computeIou(dataset_path, os.path.join(working_dir, s.stages[5], test_result_dir), channel=2)
+        ious = test_classifier.computeIou(dataset_path, os.path.join(working_dir, s.stages[5], test_result_dir), channel=2, supervisely=True)
         print(test_result_dir, ious[0])
 
     # do testing (INTER-event performance)

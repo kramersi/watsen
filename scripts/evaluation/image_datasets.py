@@ -91,8 +91,8 @@ def create(label_dir, image_dir, output_dir, name, augment=False, augment_durati
            frac_validate=0.0, reduce_train=0.0, label_pattern='*.png', image_pattern='*.jpg', force=False, supervisely=False):
 
     # fetch list of label images
-    label_folder = 'masks_machine' if supervisely else 'labels'
-    image_folder = 'img' if supervisely else 'images'
+    label_folder = 'labels'
+    image_folder = 'images'
     labels = glob(os.path.join(label_dir, label_folder, label_pattern))
     if len(labels) == 0:
         return

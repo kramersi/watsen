@@ -11,7 +11,7 @@ from PIL import Image
 import pandas
 
 
-def test(model_dir, dataset_csv, working_dir, force=False):
+def test(model_dir, dataset_csv, working_dir, force=False, supervisely=False):
 
     # create folder name
     output_dir = os.path.join(working_dir, s.stages[5],
@@ -39,21 +39,29 @@ def test(model_dir, dataset_csv, working_dir, force=False):
         # Run prediction
         net.predictAll(
             model_path=os.path.join(model_dir, 'model.cpkt'),
-            dataset_path=dataset_csv, output_dir=output_dir, roles=['test'])
+            dataset_path=dataset_csv, output_dir=output_dir, roles=['test'], supervisely=supervisely)  # supervisely is added
     else:
         print(os.path.basename(output_dir), ' already exists. Skipping.')
 
 
-def computeIou(dataset, prediction_dir, roles=['test'], channel=None):
+def computeIou(dataset, prediction_dir, roles=['test'], channel=None, supervisely=False):
     # compute IoU for whole image and for ROI
     data = pandas.read_csv(dataset)
     # filter to roles (train/test)
     data = data.loc[data['role'].isin(roles), :]
     # get prediction paths
     y_pred_paths = pandas.DataFrame(dict(pred_path=glob(prediction_dir + '/*')))
-    y_pred_paths['time'] = ['_'.join(os.path.basename(os.path.splitext(p)[0]).split('_')[-3:-1]) for p in y_pred_paths['pred_path']]
-    # match two together
-    paths = pandas.merge(data, y_pred_paths, how='inner', on='time')
+
+    # match prediction with labelling together, if supervisely than no time information to join them, use image name instead
+    if supervisely is True:
+        data['name'] = data['label_path'].str.split('\\', expand=True)[4]
+        y_pred_paths['name'] = y_pred_paths['pred_path'].str.split('\\', expand=True)[4]
+        paths = pandas.merge(data, y_pred_paths, how='inner', on='name')
+    else:
+        y_pred_paths['time'] = ['_'.join(os.path.basename(os.path.splitext(p)[0]).split('_')[-3:-1]) for p in
+                                y_pred_paths['pred_path']]
+        paths = pandas.merge(data, y_pred_paths, how='inner', on='time')
+
     # extract all image data
     y_pred_batch = np.array([np.array(Image.open(path), dtype=np.float32) for path in paths.loc[:, 'pred_path']])/s.y_scaling
     y_true_batch = np.array([np.array(Image.open(path), dtype=np.float32) for path in paths.loc[:, 'label_path']])

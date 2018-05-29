@@ -283,7 +283,7 @@ class Unet(object):
 
         return prediction
 
-    def predictAll(self, model_path, dataset_path, output_dir, roles=['test']):
+    def predictAll(self, model_path, dataset_path, output_dir, roles=['test'], supervisely=False):
         """
         Uses the model to create a prediction for all image files in dataset
         :param roles: which images of the dataset should be used
@@ -292,7 +292,8 @@ class Unet(object):
         :param model_path: path to the model checkpoint to restore
         """
         init = tf.global_variables_initializer()
-        dataProvider = image_util.ImageDataProvider(dataset_path=dataset_path, roles=roles)
+        shuffle = True if supervisely else False  # added from Simon for supervisely data
+        dataProvider = image_util.ImageDataProvider(dataset_path=dataset_path, roles=roles, shuffle_data=shuffle)
 
         imagecount = dataProvider.data_length
 
