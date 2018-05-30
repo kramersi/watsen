@@ -218,7 +218,7 @@ prediction_combinations = [
     #     "model": "cam1cam5_intra_0_0.2_0.4__ly4ftr16w2__"
     # },
     {
-         "data": "cam2_161006A_0_0.2_0.4",
+         "data": "cam1_161006A_0_0.2_0.4",
          "model": "all_flipped_supervisely__ly4ftr16w2__"
     },
 ]
@@ -251,12 +251,19 @@ rois = {
         "left": 0,
         "height": 268,
         "width": 508,
-    }
-    # "cam4": {
-    #     "name": "dam_water_level_cam4",
-    #     "top": 0,
-    #     "left": 400,
-    #     "height": 150,
-    #     "width": 0
-    # },
+    },
+    "cam2": {
+        "name": "cam2",
+        "top": 60,
+        "left": 30,
+        "height": 220,
+        "width": 500
+    },
+    "cam4": {
+        "name": "dam_water_level_cam4",
+        "top": 20,
+        "left": 0,
+        "height": 330,
+        "width": 640
+    },
 }
