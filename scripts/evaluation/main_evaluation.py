@@ -57,31 +57,54 @@ sensor_data_urls = [
     # 'https://zenodo.org/record/1014028/files/all_c3_h_us_nivus.txt',
     # 'https://zenodo.org/record/1014028/files/all_c3_h_us_nivus.txt',
     # 'https://zenodo.org/record/1014028/files/all_c3_h_us_nivus.txt',
-    'https://zenodo.org/record/1014028/files/all_c3_h_us_nivus.txt'
-
+    'https://zenodo.org/record/1014028/files/all_c3_h_us_nivus.txt', # until here for direct extraction of all pictures
+    'https://zenodo.org/record/1014028/files/all_c3_h_us_nivus.txt',
+    'https://zenodo.org/record/1014028/files/all_c3_h_us_nivus.txt',
+    'https://zenodo.org/record/1014028/files/all_c3_h_us_nivus.txt',
+    'https://zenodo.org/record/1014028/files/all_c3_h_us_nivus.txt',
+    'https://zenodo.org/record/1014028/files/all_c3_h_us_nivus.txt',
+    'https://zenodo.org/record/1014028/files/all_c3_h_us_nivus.txt',
+    'https://zenodo.org/record/1014028/files/all_c3_h_us_nivus.txt',
+    'https://zenodo.org/record/1014028/files/all_c3_h_us_nivus.txt',
+    'https://zenodo.org/record/1014028/files/all_s3_h_us_maxbotix.txt',
+    'https://zenodo.org/record/1014028/files/all_s3_h_us_maxbotix.txt',
+    'https://zenodo.org/record/1014028/files/all_s3_h_us_maxbotix.txt',
+    'https://zenodo.org/record/1014028/files/all_s6_h_us_maxbotix.txt',
+    'https://zenodo.org/record/1014028/files/all_s6_h_us_maxbotix.txt',
+    'https://zenodo.org/record/1014028/files/all_s6_h_us_maxbotix.txt'
 ]
 camera_time_offset_url = 'https://zenodo.org/record/1039631/files/temporal_offsets_of%20cameras.txt'
 
 ## Set up folder structure
 setup.run(working_dir)
 
-work_types = ['predict']  # select what to do from: extract, label, train, test, predict (order is important)
+work_types = ['extract']  # select what to do from: extract, label, train, test, predict (order is important)
 
 if 'extract' in work_types:
     ## Fetch videos from repositories (only downloaded if necessary)
     video_folders = []
-    for url in video_archive_urls:
-        video_folders.append(fetch_videos.sync(os.path.join(working_dir, s.stages[0]), url))
+    # for url in video_archive_urls:
+    #     video_folders.append(fetch_videos.sync(os.path.join(working_dir, s.stages[0]), url))
 
     # Get information about temporal  offset of videos, so they can be compared to sensor data
     time_offset = extract_frames.load_video_time_offsets(camera_time_offset_url)
 
-    # ## Extract video frames into multiframe images Force to regenerate frames for given camera
-    for i, vid in enumerate(video_archive_urls):
+    ## for extracting frames of already downloaded videos in rgb not grey scale
+    video_folders = glob.glob(os.path.join(working_dir, s.stages[0], 'extracted_videos', '*'))
+
+    for i, vid in enumerate(video_folders):
         extract_frames.extract_from_all(
-            video_folders[i], os.path.join(working_dir, s.stages[1]),
+            vid, os.path.join(working_dir, s.stages[1]),
             s.frame_extraction_new_dim,
             sensor_data_urls[i], time_offset, force=False)
+
+    # # ## Extract video frames into multiframe images Force to regenerate frames for given camera
+    # for i, vid in enumerate(video_archive_urls):
+    #     extract_frames.extract_from_all(
+    #         video_folders[i], os.path.join(working_dir, s.stages[1]),
+    #         s.frame_extraction_new_dim,
+    #         sensor_data_urls[i], time_offset, force=False)
+
 
 if 'label' in work_types:
     ## Select samples randomly for labelling  ## is done directly in supervisely

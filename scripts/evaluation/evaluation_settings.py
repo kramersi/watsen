@@ -13,14 +13,14 @@ stages = [
 ]
 
 frame_extraction_combinations_large = [
-    # [0, 0, 0],
+    [0, 0, 0],
     # [0, 0, 0.1],
     # [0, 0, 0.2],
     # [0, 0, 0.5],
     # [0, 0, 1],
     # [0, 0, 5],
     # [0, 0.1, 0.2],
-    [0, 0.2, 0.4],
+    # [0, 0.2, 0.4],
     # [0, 0.5, 1],
     # [0, 1, 2],
     # [0, 5, 10],
@@ -31,9 +31,10 @@ frame_extraction_combinations_large = [
 ]
 
 frame_extraction_combinations_small = [
+    [0, 0, 0]
     #[0, 0, 5],
     #[0, 0, 0.2],
-    [0, 0.2, 0.4]
+    #[0, 0.2, 0.4]
 ]
 
 frame_extraction_new_dim = (640, 360)

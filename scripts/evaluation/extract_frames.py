@@ -111,17 +111,22 @@ def save_frame(path, vidcap, vid_time_ms, delays, new_dims):
     # list of channels
     channels = []
 
-    for d in delays:
-        vidcap.set(0, int(vid_time_ms + d * 1000))
-        ret, image = vidcap.read()
-        if ret:
-            # if successful, convert to greyscale
-            channels.append(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY))
-        else:
-            return 1
+    # Use this to extract color images
+    vidcap.set(0, int(vid_time_ms))
+    ret, image = vidcap.read()
+
+    # for d in delays:
+    #     # Use this to extract color images
+    #     vidcap.set(0, int(vid_time_ms + d * 1000))
+    #     ret, image = vidcap.read()
+    #     if ret:
+    #         # if successful, convert to greyscale
+    #         channels.append(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY))
+    #     else:
+    #         return 1
 
     # MERGE Channels
-    image = cv2.merge(tuple(channels))
+    # image = cv2.merge(tuple(channels))
 
     # downscale image
     try:
