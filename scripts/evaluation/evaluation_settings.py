@@ -219,7 +219,7 @@ prediction_combinations = [
     # },
     {
          "data": "cam2_161006A_0_0.2_0.4",
-         "model": "dataset47_supervisely__ly4ftr16w2__"
+         "model": "all_flipped_supervisely__ly4ftr16w2__"
     },
 ]
 y_scaling = 200
@@ -245,12 +245,12 @@ rois = {
         "height": 142,
         "width": 120
     },
-    "supervisely": {
+    "Flood": {
         "name": "supervisely_pics",
         "top": 0,
         "left": 0,
-        "height": 360,
-        "width": 640,
+        "height": 268,
+        "width": 508,
     }
     # "cam4": {
     #     "name": "dam_water_level_cam4",

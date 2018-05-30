@@ -65,7 +65,7 @@ camera_time_offset_url = 'https://zenodo.org/record/1039631/files/temporal_offse
 ## Set up folder structure
 setup.run(working_dir)
 
-work_types = ['test']  # select what to do from: extract, label, train, test, predict (order is important)
+work_types = ['predict']  # select what to do from: extract, label, train, test, predict (order is important)
 
 if 'extract' in work_types:
     ## Fetch videos from repositories (only downloaded if necessary)
@@ -121,33 +121,33 @@ if 'test' in work_types:
         ious = test_classifier.computeIou(dataset_path, os.path.join(working_dir, s.stages[5], test_result_dir), channel=2, supervisely=True)
         print(test_result_dir, ious[0])
 
-    # do testing (INTER-event performance)
-    for model_dir in os.listdir(os.path.join(working_dir, s.stages[4])):
-        # get multitime
-        multitime = model_dir.split(sep='__')[0].split('_', maxsplit=2)[-1]
-        datasets = glob.glob(os.path.join(working_dir, s.stages[3], '*' + multitime + '.csv'))
-        for dataset in datasets:
-            test_classifier.test(
-                model_dir=os.path.join(working_dir, s.stages[4], model_dir),
-                working_dir=working_dir, dataset_csv=dataset, force=False
-            )
-    predictions = os.listdir(os.path.join(working_dir, s.stages[5]))
-    test_results = {'run': [], 'flooding': [], 'all_classes': []}
-
-    # Evaluate the predictions for the test data: compare segmentation to manual label
-    for prediction_dir in predictions:
-        if os.path.isdir(os.path.join(working_dir, s.stages[5], prediction_dir)):
-            dataset_path = os.path.join(working_dir, s.stages[3], prediction_dir.split('__D')[1] + '.csv')
-            all_classes, flooding = test_classifier.computeIou(dataset_path, os.path.join(working_dir, s.stages[5], prediction_dir), channel=2)
-            test_results['flooding'].append(flooding)
-            test_results['all_classes'].append(all_classes)
-            test_results['run'].append(prediction_dir)
-
-    # write results to file
-    test_results['num_frames'] = [sum([float(tr) > 0 for tr in st.split('_')[2:5]]) + 1 for st in test_results['run']]
-    test_results['mode'] = [st.split('_')[9] for st in test_results['run']]
-    result_file = os.path.join(working_dir, s.stages[5], 'test_results_' + datetime.now().strftime('%Y-%m-%d %H%M%S') + '.txt')
-    pandas.DataFrame(test_results).to_csv(result_file)
+    # # do testing (INTER-event performance)
+    # for model_dir in os.listdir(os.path.join(working_dir, s.stages[4])):
+    #     # get multitime
+    #     multitime = model_dir.split(sep='__')[0].split('_', maxsplit=2)[-1]
+    #     datasets = glob.glob(os.path.join(working_dir, s.stages[3], '*' + multitime + '.csv'))
+    #     for dataset in datasets:
+    #         test_classifier.test(
+    #             model_dir=os.path.join(working_dir, s.stages[4], model_dir),
+    #             working_dir=working_dir, dataset_csv=dataset, force=False
+    #         )
+    # predictions = os.listdir(os.path.join(working_dir, s.stages[5]))
+    # test_results = {'run': [], 'flooding': [], 'all_classes': []}
+    #
+    # # Evaluate the predictions for the test data: compare segmentation to manual label
+    # for prediction_dir in predictions:
+    #     if os.path.isdir(os.path.join(working_dir, s.stages[5], prediction_dir)):
+    #         dataset_path = os.path.join(working_dir, s.stages[3], prediction_dir.split('__D')[1] + '.csv')
+    #         all_classes, flooding = test_classifier.computeIou(dataset_path, os.path.join(working_dir, s.stages[5], prediction_dir), channel=2, supervisely=True)
+    #         test_results['flooding'].append(flooding)
+    #         test_results['all_classes'].append(all_classes)
+    #         test_results['run'].append(prediction_dir)
+    #
+    # # write results to file
+    # test_results['num_frames'] = [sum([float(tr) > 0 for tr in st.split('_')[2:5]]) + 1 for st in test_results['run']]
+    # test_results['mode'] = [st.split('_')[9] for st in test_results['run']]
+    # result_file = os.path.join(working_dir, s.stages[5], 'test_results_' + datetime.now().strftime('%Y-%m-%d %H%M%S') + '.txt')
+    # pandas.DataFrame(test_results).to_csv(result_file)
 
 
 if 'predict' in work_types:

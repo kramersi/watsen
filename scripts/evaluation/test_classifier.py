@@ -55,7 +55,7 @@ def computeIou(dataset, prediction_dir, roles=['test'], channel=None, supervisel
     # match prediction with labelling together, if supervisely than no time information to join them, use image name instead
     if supervisely is True:
         data['name'] = data['label_path'].str.split('\\', expand=True)[4]
-        y_pred_paths['name'] = y_pred_paths['pred_path'].str.split('\\', expand=True)[4]
+        y_pred_paths['name'] = y_pred_paths['pred_path'].str.split('\\', expand=True)[3]
         paths = pandas.merge(data, y_pred_paths, how='inner', on='name')
     else:
         y_pred_paths['time'] = ['_'.join(os.path.basename(os.path.splitext(p)[0]).split('_')[-3:-1]) for p in
@@ -87,12 +87,12 @@ def computeIou(dataset, prediction_dir, roles=['test'], channel=None, supervisel
 
 
 def pixel_accuracy(y_pred, y_true, channel=0, camera_name='cam1', left_margin=0, top_margin=0):
-    confusion = np.tensordot(y_pred, y_true, axes=([0, 1], [0, 1]))
+    confusion = np.tensordot(y_pred, y_true, axes=([0, 1], [0, 1])).reshape(3, 3)
     roi = s.rois[camera_name]
     confusion_roi = np.tensordot(
         y_pred[roi['top']-1+top_margin: roi['top'] + roi['height'], roi['left']-1+left_margin: roi['left'] + roi['width'], :],
         y_true[roi['top']-1+top_margin: roi['top'] + roi['height'], roi['left']-1+left_margin: roi['left'] + roi['width'], :],
-        axes=([0, 1], [0, 1]))
+        axes=([0, 1], [0, 1])).reshape(3, 3)
     iou = confusion[channel, channel] / (np.sum(confusion[channel, :]) + np.sum(confusion[channel, :]))
     iou_roi = confusion_roi[channel, channel] / (np.sum(confusion_roi[channel, :]) + np.sum(confusion_roi[channel, :]))
     return iou, iou_roi
