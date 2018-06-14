@@ -57,7 +57,7 @@ def process_labels(working_dir, image_pattern='*.png'):
             data.to_csv(output_filepath)
 
 
-def compute_index(image_path, channel=2, threshold=0.9, islabel=False):
+def compute_index(image_path, channel=1, threshold=0.9, islabel=False):
     # get info from filename
     date, time, sensor_value = os.path.splitext(image_path)[0].split('_')[-3:]
     camera = os.path.basename(image_path).split('_')[0]

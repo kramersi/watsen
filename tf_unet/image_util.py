@@ -64,9 +64,14 @@ class BaseDataProvider(object):
     
     def _process_labels(self, label):
         # encode label as one-hot
-        one_hot = (np.arange(self.n_class) == label[:, :, None]).astype(int)
-
-        return np.squeeze(one_hot)
+        if self.n_class == 2:
+            one_hot = np.zeros((label.shape[0], label.shape[1], 2))
+            one_hot[:, :, 0] = 1-label[:, :, 0]
+            one_hot[:, :, 1] = label[:, :, 0]
+        else:
+            #one_hot = np.squeeze((np.arange(self.n_class) == label[:, :, None]).astype(int))
+            one_hot = np.eye(self.n_class)[label][:, :, 1, :]
+        return one_hot
     
     def _process_data(self, data):
         # normalization

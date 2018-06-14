@@ -78,7 +78,7 @@ camera_time_offset_url = 'https://zenodo.org/record/1039631/files/temporal_offse
 ## Set up folder structure
 setup.run(working_dir)
 
-work_types = ['extract']  # select what to do from: extract, label, train, test, predict (order is important)
+work_types = ['train']  # select what to do from: extract, label, train, test, predict (order is important)
 
 if 'extract' in work_types:
     ## Fetch videos from repositories (only downloaded if necessary)
@@ -125,7 +125,7 @@ if 'train' in work_types:
 
     # do training with each dataset, only using image files labeled for testing
     for dataset in glob.glob(os.path.join(working_dir, s.stages[3], '*.csv')):  # deleted *intra* for supervisely
-        train_classifier.train(dataset, working_dir, appendum='w2')
+        train_classifier.train(dataset, working_dir, appendum='w2', force=False)
 
 if 'test' in work_types:
     # do testing (INTRA-event performance)
@@ -137,12 +137,12 @@ if 'test' in work_types:
         )  # add suepervisely for not using time information
 
     # test ious was outcommented before
-    for test_result_dir in os.listdir(os.path.join(working_dir, s.stages[5])):
-        # For each segmentation result folder, find corresponding dataset name
-        dataset_path = os.path.join(working_dir, s.stages[3], test_result_dir.split('__D')[1] + '.csv')
-        # compute IoU by comparing the ground truth to the test results
-        ious = test_classifier.computeIou(dataset_path, os.path.join(working_dir, s.stages[5], test_result_dir), channel=2, supervisely=True)
-        print(test_result_dir, ious[0])
+    # for test_result_dir in os.listdir(os.path.join(working_dir, s.stages[5])):
+    #     # For each segmentation result folder, find corresponding dataset name
+    #     dataset_path = os.path.join(working_dir, s.stages[3], test_result_dir.split('__D')[1] + '.csv')
+    #     # compute IoU by comparing the ground truth to the test results
+    #     ious = test_classifier.computeIou(dataset_path, os.path.join(working_dir, s.stages[5], test_result_dir), channel=2, supervisely=True)
+    #     print(test_result_dir, ious[0])
 
     # # do testing (INTER-event performance)
     # for model_dir in os.listdir(os.path.join(working_dir, s.stages[4])):
@@ -165,7 +165,7 @@ if 'test' in work_types:
     #         test_results['flooding'].append(flooding)
     #         test_results['all_classes'].append(all_classes)
     #         test_results['run'].append(prediction_dir)
-    #
+
     # # write results to file
     # test_results['num_frames'] = [sum([float(tr) > 0 for tr in st.split('_')[2:5]]) + 1 for st in test_results['run']]
     # test_results['mode'] = [st.split('_')[9] for st in test_results['run']]

@@ -120,18 +120,20 @@ datasets = {
         "frac_test": 0.1
     }
 }
+
 network = {
     "channels": 3,
-    "classes": 3,  # before: 3
-    "layers": 4,
+    "classes": 8,  # before: 3
+    "layers": 5,
     "features_root": 16,
-    "class_weights": [1, 1, 2]  # before: [1, 1, 2]
+    "class_weights": [1, 2, 2, 2, 2, 2, 2, 2]  # before: [1, 1, 2]
 }
+
 train = {
     "optimizer": "adam",
     "batch_size": 8,
     "training_iters": 100,
-    "epochs": 20,
+    "epochs": 30,
     "display_step": 50,
     "dropout": 0.8
 }
@@ -218,9 +220,17 @@ prediction_combinations = [
     #     "data": "gopro1_0_0.2_0.4",
     #     "model": "cam1cam5_intra_0_0.2_0.4__ly4ftr16w2__"
     # },
+    # {
+    #      "data": "cam1_161006A_0_0_0",
+    #      "model": "all_flipped2_supervisely__ly4ftr16w2__"
+    # },
+    # {
+    #      "data": "cam2_161007A_0_0_0",
+    #      "model": "all_flipped2_supervisely__ly4ftr16w2__"
+    # },
     {
-         "data": "cam1_161006A_0_0.2_0.4",
-         "model": "all_flipped_supervisely__ly4ftr16w2__"
+         "data": "cam4_180531_0_0_0",
+         "model": "all_flipped2_supervisely__ly4ftr16w2__"
     },
 ]
 y_scaling = 200
@@ -250,8 +260,8 @@ rois = {
         "name": "supervisely_pics",
         "top": 0,
         "left": 0,
-        "height": 268,
-        "width": 508,
+        "height": 360,
+        "width": 640,
     },
     "cam2": {
         "name": "cam2",

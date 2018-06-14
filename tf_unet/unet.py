@@ -293,8 +293,10 @@ class Unet(object):
         """
         init = tf.global_variables_initializer()
         shuffle = True if supervisely else False  # added from Simon for supervisely data
-        dataProvider = image_util.ImageDataProvider(dataset_path=dataset_path, roles=roles, shuffle_data=shuffle)
-
+        n_class = 9
+        n_channel = 3
+        dataProvider = image_util.ImageDataProvider(dataset_path=dataset_path, roles=roles, n_class=n_class,
+                                                    n_channels=n_channel, shuffle_data=shuffle)
         imagecount = dataProvider.data_length
 
         with tf.Session() as sess:
@@ -314,7 +316,16 @@ class Unet(object):
                 y_dummy = np.empty((x.shape[0], x.shape[1], x.shape[2], self.n_class))
                 prediction = sess.run(self.predicter, feed_dict={self.x: x, self.y: y_dummy, self.keep_prob: 1.})[0]
 
-                img = Image.fromarray((prediction*200).astype(np.uint8))
+                class_mapping = {1: ['bg', [0, 0, 0]], 2: ['building', []], 3: ['bg', []],
+                                 4: ['vegetation', dict(nr=1, name='bg', rgb=[0, 0, 0)]),
+                                 dict(nr=1, name='building', rgb=[]),
+                                dict(nr=2, name='person', rgb=[]),
+                                dict(nr=3, name='vehicle', rgb=[]),
+                                dict(nr=4, name='')
+                ]
+
+
+                img = Image.fromarray((np.argmax(prediction, axis=2)*128/n_class).astype('uint8')).convert('RGB')
                 img.save(os.path.join(output_dir, os.path.splitext(name)[0]+'.png'))
 
                 # for thr in thrs:
